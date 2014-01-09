@@ -1,5 +1,3 @@
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse
 from django.shortcuts import render
 import pandas as pd
@@ -10,14 +8,14 @@ from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse_lazy
 from loq.models import Interval ,Read_alignment, Library
 from loq.forms import GraphForm
-from django.contrib import messages
-from django.core.context_processors import csrf
-from django.forms import ValidationError
-from django.http import HttpResponseForbidden, HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse
 from django.db.models import Count, Sum
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 import seaborn as sns
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+
+
+
 sns.set(style='whitegrid',palette=["#000000", "#E69F00", "#56B4E9", "#009E73", "#8C1515", "#D55E00", "#CC79A7"],context='talk')
 
 def Graph_Form(request):
@@ -85,66 +83,3 @@ def Graph_Form(request):
             return render(request,'loq/graph_filter.html',{'form':form,'errors':errors })
     else:
         return HttpResponseRedirect('/login/')
-
-# class Graph_Form(View,ModelFormMixin):
-#     model = Interval
-#     fields = ['id']
-#     form_class= GraphForm
-
-#     def post(self, request, *args, **kwargs):
-#         if not request.user.is_authenticated():
-#             return HttpResponseForbidden()
-#         self.object = self.get_object() 
-#         return super(Graph_Form, self).post(request, *args, **kwargs)
-
-# def Graph_Filter(request):
-#     if request.POST:
-#         form=GraphForm(request.POST)
-#         if form.is_valid():
-#             url = '/'+ str(form.cleaned_data['id']) +'/interval/'
-#             return HttpResponseRedirect(url)
-
-# class Graph_Form(FormView):
-#     model = Interval
-#     form_class = GraphForm
-#     template_name ='loq/graph_filter.html'
-   
-
-#     def form_valid(self,form):
-#         if form.is_valid():
-#             new_object = form.save()
-#         return super(Graph_Form,self).form_valid(form)
-
-#     def get_success_url(self):
-#         return reverse('IntervalDetailView', kwargs={'pk': new_object.pk})
-    # def get(self, request, *args, **kwargs):
-    #     context = self.get_context_data(object=id)
-    #     return self.render_to_response(context)
-     
-    # def get_success_url(self):
-    #     # Redirect to previous url
-    #     return self.request.META.get('HTTP_REFERER', None)
-            
-    # def get_form_kwargs(self):
-    #     kwargs = super(Graph_Filter, self).get_form_kwargs()
-    #     kwargs['id'] = self.request.id
-    #     return kwargs
-
-    
-    # def post(self, request, *args, **kwargs):
-    #     if not request.user.is_authenticated():
-    #         return HttpResponseForbidden()
-    #     self.object = self.get_object() 
-    #     return super(Graph_Filter, self).post(request, *args, **kwargs)
-  
-
-    # def success_url(self):
-    #     b = form.cleaned_data['IntervalSerialNumber']
-    #     return reverse('IntervalDetailView')
-
-    
-    #     else:
-    #         print 'error'
-    # def form_invalid(self,form):
-    #     print "Your submission has not been saved. Try again."
-    #     return super(Graph_Filter, self).form_invalid(form)    
