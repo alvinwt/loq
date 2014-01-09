@@ -1,0 +1,36 @@
+from django.views.generic import TemplateView
+from django_tables2 import RequestConfig, SingleTableView
+from django.shortcuts import render
+from tables import IntervalTable, AlignTable
+from loq.models import Interval, IntervalFilter,Read_alignment, AlignFilter
+from django.shortcuts import render_to_response
+from forms import MyModelForm
+#from rest_framework.generics import ListAPIView
+
+# class IntervalList(SingleTableView):
+#     model = Interval
+#     table_class = IntervalTable
+
+def int_filter(request):
+    fil = IntervalFilter(request.GET, queryset = Interval.objects.select_related().all())
+    f= IntervalTable(fil.qs)
+    RequestConfig(request).configure(f)
+    return render(request,'loq/filter.html', {'f': f, 'fil':fil})
+
+def IntervalList(request):
+    intTable= IntervalTable(Interval.objects.all())
+    RequestConfig(request).configure(intTable)
+    return render(request,"interval_list.html",{'table':intTable})
+
+
+def search_form(request):
+    if request.method == 'GET':
+        form = MyModelForm(request.GET)
+        if form.is_valid():
+            return render(request,'loq/int_data.html')
+        else:
+            return "error, template not found"
+
+        # class HomeView(TemplateView):
+#     template_name = "srb/home.html"
+#     #html not written yet

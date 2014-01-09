@@ -1,0 +1,35 @@
+{% load render_table from django_tables2 %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<html>
+  <head>
+       <title>{% block title %}{% endblock %}</title>
+  <body>
+          {% url 'interval' as int_url %}
+      <a href="{{ int_url }}"/>Home</a>
+      {% url 'int_filter' as search_url %}
+      <a href="{{ search_url }}"/>Search</a>
+ {% url 'logout' as logout_url %}
+      <a href="{{ logout_url }}"/>Logout</a>
+
+
+    {% if user.is_authenticated %}
+    <p>Welcome, {{ user.username }}.</p>
+{% else %}
+    <p>Please log in.</p>
+{% endif %}
+    {% if user.is_superuser %}
+    {%load admin_urls %}
+    <p>Hello, <a href="{% url 'admin:index' %}"/>Admin {{user.username
+ }}</a></p>
+{% else %}
+    <p>Hello, ordinary visitor.</p>
+{% endif %}
+
+    <h1>Small RNA Biogenesis Site</h1>
+    {% block content %}{% endblock %}
+    <hr>
+    
+   <p>Site Under Construction.</p>
+</body>
+</html>

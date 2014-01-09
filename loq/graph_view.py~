@@ -1,0 +1,7 @@
+from django.shortcuts import render
+from loq.models import Interval,Read_alignment,Library, GraphFilter 
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+def graph_filter(request):
+    g= GraphFilter(request.GET, queryset = Interval.objects.all())
+    return render(request,'loq/graph_filter.html', {'graph': g})

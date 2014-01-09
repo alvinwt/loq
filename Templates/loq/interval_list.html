@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load render_table from django_tables2 %}
+{% block content %}
+<!doctype html>
+<html>
+    <head>
+      <link rel="stylesheet" type="text/css"
+            href="\static\paleblue/css/screen.css">
+           <H3>miRNA Intervals</H3>
+    </head>
+    <body>
+
+      {% render_table table %}
+{% endblock %}
+    </body>
+</html>

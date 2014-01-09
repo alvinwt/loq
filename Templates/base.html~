@@ -1,0 +1,22 @@
+{% load render_table from django_tables2 %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<html>
+  <head>
+       <title>{% block title %}{% endblock %}</title>
+  <body>
+      
+    <h1>Small RNA Biogenesis Site</h1>
+    {% block content %}{% endblock %}
+    <hr>
+     {% url 'loq.home_view.interval' as int_url %}
+      <a href="{{ int_url }}"/>Home</a>
+
+      {% url 'loq.home_view.int_filter' as search_url %}
+      <a href="{{ search_url }}"/>Search</a>
+ 
+
+    {% block graph %}{% endblock %}
+    <p>Site Under Construction.</p>
+</body>
+</html>

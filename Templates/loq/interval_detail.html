@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+{% block content %}
+<!doctype html> 
+<html>
+    <head>
+         <style>
+   <link rel="stylesheet" type="text/css"
+         href="\static\paleblue/css/screen.css" />
+   </style>
+    </head>
+    <body>
+       <H3>Interval Data for {{interval.mirName}}</H3>
+       <table>
+<link rel="stylesheet" type ="text/css" href="\static\paleblue/css/screen.css" />
+    <table class="paleblue">
+      <tr class ="odd">
+        
+    <th>ID</th><th>Name</th>
+		<th>Chromosome</th>
+		<th>Start</th>
+		<th>Stop</th>
+		<th>Strand</th>
+                <th>UCSC Link</th>
+ 
+	</tr>
+	<tr><td>
+        {{interval.IntervalSerialNumber}}</TD><TD>
+        {{interval.mirName}}</TD><TD>    
+        {{interval.chr}}</TD><TD>
+        {{interval.start}}</TD><TD>
+        {{interval.stop}} </TD><TD>
+	{{interval.mapped_strand}}</TD><TD>
+        <a href="{{interval.Link}}">{{interval.Link}}</a></TD></tr>
+  </table>
+<br>
+ <h3>Individual alignments for {{interval.mirName}}</h3> 
+ {% render_table interval_detail %}
+
+<br>
+   <h3>Secondary Structure of {{interval.mirName}} {{interval.chr}}:{{interval.start}}-{{interval.stop}}</h3>
+<br>   
+<applet  code="VARNA.class" codebase="\static\" archive={% static "loq/VARNA.jar" %} width="550" height="350"/>
+ <param name="sequenceDBN"  value="{{seq}}"/>
+  <param name="structureDBN" value="{% firstof interval.Structure "(((........))).(((((.......................)))))...." %}"/>
+  <param name="title" value="{{interval.mirName}}"/>
+  <param name="titleSize" value="18" />
+  <param name="applyBasesStyle1on" value="57-58,60-63,72,74-76,78,80"/>
+  <param name="applyBasesStyle2on" value="17-22,130-135" />
+  <param name="applyBasesStyle3on" value="15,16,23-35,40,41,52-56,59,64-71,73,77,
+      79,85,86,93-95,100-106,111-115,120-129,136,138,151" />
+  <param name="applyBasesStyle4on" value="36-39,116-119" />
+  <param name="basesStyle1" value="fill=#ffcccc,outline=#ff4d4d" />
+  <param name="basesStyle2" value="fill=#ccccff,outline=#4d4dff" />
+  <param name="basesStyle3" value="fill=#FF8F8B,outline=#FF0000" />
+  <param name="basesStyle4" value="fill=#ffe5cc,outline=#f27900" />
+  <param name="customBases" value="29:fill=#FFFFFF,label=#0000FF,outline=#FF0000;
+      30:fill=#FFFFFF,label=#FF0000;" />
+  <param name="rotation" value="0.0" />
+</applet>
+
+<!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> -->
+<!-- <html xmlns="http://www.w3.org/1999/xhtml"> -->
+<!--   <head> -->
+<!--     <meta http-equiv="content-type" content="text/html; charset=utf-8"/> -->
+<!--     <title> -->
+<!--       Google Visualization API Sample -->
+<!--     </title> -->
+<!--     <script type="text/javascript" src="//www.google.com/jsapi"></script> -->
+<!--     <script type="text/javascript"> -->
+<!--       google.load('visualization', '1.1', {packages: ['corechart', 'controls']}); -->
+<!--     </script> -->
+<!--     <script type="text/javascript"> -->
+<!--       function drawVisualization() { -->
+<!--         var dashboard = new google.visualization.Dashboard( -->
+<!--              document.getElementById('dashboard')); -->
+      
+<!--          var control = new google.visualization.ControlWrapper({ -->
+<!--            'controlType': 'ChartRangeFilter', -->
+<!--            'containerId': 'control', -->
+<!--            'options': { -->
+<!--              'filterColumnIndex': 0, -->
+<!--              'ui': { -->
+<!--                'chartType': 'AreaChart',  -->
+<!--               'chartOptions': { -->
+<!--                  'chartArea': {'width': '90%'}, -->
+<!--               'hAxis': {}, -->
+<!--                }, -->
+<!--                'chartView': { -->
+<!--                  'columns': [0, 1] -->
+<!--                }, -->
+<!--                'minRangeSize': 10 -->
+<!--              } -->
+<!--            }, -->
+<!--            'state': {} -->
+<!--          }); -->
+      
+<!--             var chart = new google.visualization.ChartWrapper({ -->
+<!--      'chartType': 'AreaChart', -->
+<!--      'containerId': 'chart', -->
+<!--      'options': { -->
+<!--        // Use the same chart area width as the control for axis alignment. -->
+<!--        'chartArea': {'height': '80%', 'width': '90%'}, -->
+<!--         'title':'Read Counts per Genomic location at {{interval.chr}}:{{interval.start}}-{{interval.stop}}', -->
+<!--        'hAxis': {'minorGridlines.count':5, 'slantedText': -->
+<!--      true,'title':'Postion.','textPosition': 'in'},  -->
+<!--        'vAxis': {'viewWindow': {'min': 0, 'max': '90%' },'title':'Read Counts'}, -->
+<!--        'legend': {'position': 'none'} -->
+<!--      } -->
+<!--          }); -->
+
+<!--           var data = new google.visualization.DataTable(); -->
+<!--           data.addColumn('string','Position'); -->
+<!--       data.addColumn('number','Read Counts'); -->
+<!--       data.addRows(​{{ graph|safe }});     -->
+<!--          dashboard.bind(control, chart); -->
+<!--          dashboard.draw(data); -->
+<!--       } -->
+      
+<!--       google.setOnLoadCallback(drawVisualization); -->
+<!--     </script> -->
+<!--   </head> -->
+<!--   <body> -->
+<!--     <div id="dashboard"> -->
+<!--         <div id="chart" style='width: 915px; height: 300px;'></div> -->
+<!--         <div id="control" style='width: 915px; height: 50px;'></div> -->
+<!--     </div> -->
+<!--   </body> -->
+<!-- </html> -->
+<!-- ​ -->
+<!-- ​</body> -->
+<!-- <table border="1" bordercolor="#000000" -->
+<!--        style="background-color:#FFFFFF;width:900px;overflow:auto"> -->
+<!--
+You are free to copy and use this sample in accordance with the terms of the
+Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
+-->
+<br> 
+<table>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>
+      Google Visualization API Sample
+    </title>
+    <script type="text/javascript" src="//www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load('visualization', '1', {packages: ['corechart']});
+    </script>
+    <script type="text/javascript">
+
+       
+      function drawVisualization() { var data = google.visualization.arrayToDataTable({{graph|safe}});
+        var options = {
+          width: 725, height: 525,
+	  areaOpacity: 0.0,
+          title: 'Read Counts at Interval {{interval.chr}}:{{interval.start}}-{{interval.stop}}',
+          vAxis: {title: 'Normalized Read Counts', textPosition:'in', gridlines:{count: 8}},
+          isStacked: false
+        };
+  
+        var chart = new google.visualization.SteppedAreaChart(document.getElementById('visualization'));
+        chart.draw(data, options);
+      }
+      google.setOnLoadCallback(drawVisualization);
+    </script>
+  </head>
+  <body style="font-family: Arial;border: 0 none;">
+    <div id="visualization" style="width: 750px; height:
+    550px;" align="center;">
+    </div>
+      <Table class="paleblue", style="margin-left:120px;" >
+      <tr class ="even">
+      <th>{{interval.start}}</th><th><pre>{{seq}}<pre]></th><th>{{interval.stop}}</th>
+	</tr>
+	<tr class = "odd">
+	<td></td><td>
+          <pre>{{ msa }}</pre><td><pre>{{counts}}</pre></td>
+	</tr>
+        </table>
+  </body>
+</html>
+
+{% endblock %}
+{% block graph %}
+{% endblock graph %}
+
