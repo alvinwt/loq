@@ -4,7 +4,7 @@ class GraphForm(forms.Form):
     mirName = forms.CharField(max_length=100,label='miRNA Name',help_text="You can exclude 'dme-mir', but do provide a specific name e.g. 307a.")
     Library = forms.MultipleChoiceField(required=False,
         widget=forms.CheckboxSelectMultiple, choices=[('D005','D005'),('D006','D006'),('D007','D007'),('D008','D008'),('D009','D009'),('D010','D010')])
-    Chart= forms.ChoiceField(required=True, label= "Chart type", choices=[('bar','Bar'),('line','Line'),('barh','Horizontal Bar')])
+    Chart= forms.ChoiceField(required=True, label= "Chart type", choices=[('bar','Bar'),('line','Line'),('kde','Density')])
     Normal= forms.ChoiceField(required=True, label= "Normalization", choices=[('dist_read_counts','Raw Read Count'),('dist_rpm','Reads Per Million'),('dist_percent_read_counts','Percentage miRNA Mapped')])
      
     # def create_graph(self,form):
