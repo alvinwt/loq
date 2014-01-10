@@ -28,7 +28,7 @@ def plot_graph(name,libraries,chart_type,normal,style):
     length=[]
     for i in len_count:
         length.append(int(i['read_length']))
-        lengths_reads = sorted(set(length))
+    lengths_reads = sorted(set(length))
 
         #Generate dataframe, fills it with 0s and intiate a dict with lib:read count values 
     df = pd.DataFrame(index=lengths_reads, columns=libraries)
@@ -42,6 +42,7 @@ def plot_graph(name,libraries,chart_type,normal,style):
     for i in len_count:
         lb=i['lib']
         lh=i['read_length']
+        
         if normal == 'dist_rpm':
             data = int(i['read_length__count']*i['normReads'])
             title = 'Reads per million'
@@ -51,9 +52,10 @@ def plot_graph(name,libraries,chart_type,normal,style):
         else: 
             data = int((100*i['read_length__count']*i['read_counts'])/d[i['lib']])
             title ='Read counts per miRNA mapped'
+            
         df[lb][lh] += data
 
-        # Draws the figure 
+     # Draws the figure 
     fig= plt.figure()
     ax = fig.add_subplot(111)
     df.plot(ax=ax,style=style,kind=chart_type,figsize=(10,8),subplots=False)
@@ -106,9 +108,15 @@ def Graph_Form(request):
                     return HttpResponse("Please provide a specific query. Your search returned more than one result.")
             
                 except ObjectDoesNotExist:
-                    return HttpResponse("Please check your query, the miRNA does not exist in the database.")          
+                    return HttpResponse("Please check your query, the miRNA does not exist in the database.")
             else:
                 form = GraphForm()
+                errors.append('Please choose all the fields before selecting')
                 return render(request,'loq/graph_filter.html',{'form':form,'errors':errors })
+                
+        else:
+            form = GraphForm()
+            #errors.append('Please choose all the fields before selecting')
+            return render(request,'loq/graph_filter.html',{'form':form,'errors':errors })
     else:
         return HttpResponseRedirect('/login/')
