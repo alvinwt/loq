@@ -12,6 +12,7 @@ import itertools
 from django.contrib.auth.decorators import login_required
 from tables import DetailTable
 from django.utils.decorators import method_decorator
+from django.db.models import Count
     
 class IntervalDetailView(SingleTableMixin,DetailView):
     model= Interval
@@ -50,27 +51,68 @@ class IntervalDetailView(SingleTableMixin,DetailView):
     
             
     def get_msa(self):
-        self = self.object                
-        # read_list = Read_alignment.objects.filter(chr= self.chr, start__gte= self.start , stop__lte=self.stop)
-        read_list=Read_alignment.objects.filter(intervalName=self,strand=self.mapped_strand).order_by('lib')
-        string =""
-        if self.mapped_strand == '+':
-            for i in read_list:
-                reads = '%s\n' % (i.sequence)
-                spaces = int(i.start)-int(self.start)
+        self = self.object
+        read_list=Read_alignment.objects.filter(intervalName=self,strand=self.mapped_strand).order_by('lib').select_related().order_by('start')
+        count_seq=  read_list.values('sequence','start','stop').annotate(Count('sequence'))
+        all_libs = read_list.values('lib').annotate(Count('lib'))
+        allseqs =[]
+        string ="\n\n"
+        libs = []
+        
+        for i in count_seq:
+            allseqs.append(i['sequence'])
+
+  
+        for i in all_libs:
+            libs.append(i['lib'])
+        libs = sorted(libs)
+        df = pd.DataFrame(index=allseqs,columns =libs,dtype='float64')
+        
+        for i in read_list:
+            df[i.lib][i.sequence] ='%.2f' % i.normReads
+
+            # df = df.sort_index(ascending =False) 
+        counts = df.to_string(index=None, na_rep ='',sparsify=True)
+
+        for j in count_seq:
+            if self.mapped_strand == '+':
+                reads = '%s\n' % j['sequence'] 
+                spaces = int(j['start'])-int(self.start)            
                 if spaces >= 1:
                     string += spaces * ' ' + reads 
                 else:
                     string += reads
-        else:
-            for i in read_list:
-                reads = '%s\n' % (i.sequence)   
-                spaces = int(self.stop)-int(i.stop)
+            else:
+                reads = '%s\n' % j['sequence']   
+                spaces = int(self.stop)-int(j['stop'])
                 if spaces >= 1:
                     string += spaces * ' ' + reads 
                 else:
-                    string += reads 
-        return string
+                    string += reads   
+        return {'string':string, 'counts': counts}
+
+
+    
+        # # read_list = Read_alignment.objects.filter(chr= self.chr, start__gte= self.start , stop__lte=self.stop)
+        # read_list=Read_alignment.objects.filter(intervalName=self,strand=self.mapped_strand).order_by('lib')
+        # string =""
+        # if self.mapped_strand == '+':
+        #     for i in read_list:
+        #         reads = '%s\n' % (i.sequence)
+        #         spaces = int(i.start)-int(self.start)
+        #         if spaces >= 1:
+        #             string += spaces * ' ' + reads 
+        #         else:
+        #             string += reads
+        # else:
+        #     for i in read_list:
+        #         reads = '%s\n' % (i.sequence)   
+        #         spaces = int(self.stop)-int(i.stop)
+        #         if spaces >= 1:
+        #             string += spaces * ' ' + reads 
+        #         else:
+        #             string += reads 
+       
 
     # def get_graph(self):
     #     self=self.object
@@ -152,18 +194,18 @@ class IntervalDetailView(SingleTableMixin,DetailView):
 
         for i in list:
             i[0] =str(i[0])
-        
+        return list
         #first_row.append(str(i))
         #list = list.insert(0,first_row)        
-        return list
 
-    def get_read_counts(self):
-        self= self.object
-        reads=Read_alignment.objects.filter(intervalName=self)
-        count =""
-        for i in reads:
-            count += str(i.normReads)+' '+ str(i.lib) + "\n"  
-        return count
+
+    # def get_read_counts(self):
+    #     self= self.object
+    #     reads=Read_alignment.objects.filter(intervalName=self)
+    #     count =""
+    #     for i in reads:
+    #         count += str(i.normReads)+' '+ str(i.lib) + "\n"  
+    #     return count
 
     # def get_libname(self):
     #     self= self.object
@@ -177,9 +219,9 @@ class IntervalDetailView(SingleTableMixin,DetailView):
     def get_context_data(self, **kwargs):
         context = super(IntervalDetailView,self).get_context_data(**kwargs)
         context['seq'] = self.get_seq()
-        context['msa'] = self.get_msa()
+        context['msa'] = self.get_msa()['string']
         context['graph']= self.get_graph2()
-        context['counts']=self.get_read_counts()
+        context['counts']=self.get_msa()['counts']
         context['form']= GraphForm
         # context['lib'] = self.get_libname()
         return context

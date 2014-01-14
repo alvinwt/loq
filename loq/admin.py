@@ -10,7 +10,7 @@ class IntAdmin(admin.ModelAdmin):
     search_fields =('NeatName','mirName' , 'IntervalSerialNumber','Tags','Annotations', 'chr','start','stop' )
 
 class AlignmentAdmin(admin.ModelAdmin):
-    search_fields =('id','chr', 'start','stop','lib',)
+    search_fields =('id','chr', 'start','stop','lib','sequence',)
     list_display=('id','chr','start','stop','sequence','read_counts','intervalName','normReads','lib','genomic_hits','strand', 'read_length',
     #'library',
     )

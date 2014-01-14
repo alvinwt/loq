@@ -217,7 +217,7 @@ SOUTH_TESTS_MIGRATE=False
 SKIP_SOUTH_TESTS= True
 
 DBBACKUP_STORAGE = 'dbbackup.storage.dropbox_storage'
-DBBACKUP_TOKENS_FILEPATH = '/home/alvin/Dropbox/tokens/tokens'
+DBBACKUP_TOKENS_FILEPATH = '/home/lichenhao/Dropbox/tokens/tokens'
 DBBACKUP_DROPBOX_APP_KEY = '1h717o0tvdtn3nd'
 DBBACKUP_DROPBOX_APP_SECRET = 'pkuw8m9ymgf1473'
 

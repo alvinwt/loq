@@ -13,8 +13,8 @@ from django.db.models import Count, Sum
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 import seaborn as sns
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-
-sns.set(style='whitegrid',palette=["#000000", "#E69F00", "#56B4E9", "#009E73", "#8C1515", "#D55E00", "#CC79A7"],context='talk')
+sns.set(style='whitegrid',palette="hls",context='talk')
+# sns.set(style='whitegrid',palette=["#000000", "#E69F00", "#56B4E9", "#009E73", "#8C1515", "#D55E00", "#CC79A7"],context='talk')
 
 
 def plot_graph(name,libraries,chart_type,normal,style):
@@ -31,7 +31,7 @@ def plot_graph(name,libraries,chart_type,normal,style):
     lengths_reads = sorted(set(length))
 
         #Generate dataframe, fills it with 0s and intiate a dict with lib:read count values 
-    df = pd.DataFrame(index=lengths_reads, columns=libraries)
+    df = pd.DataFrame(index=lengths_reads, columns=libraries, dtype='float64')
     df = df.fillna(0).convert_objects()
     d= {}                
     for j in lib_total_count:
@@ -42,29 +42,33 @@ def plot_graph(name,libraries,chart_type,normal,style):
     for i in len_count:
         lb=i['lib']
         lh=i['read_length']
-        
+       
         if normal == 'dist_rpm':
-            data = int(i['read_length__count']*i['normReads'])
+            data = i['read_length__count']*i['normReads']
             title = 'Reads per million'
+           
         elif normal == 'dist_read_counts':
-            data = int(i['read_length__count']*i['read_counts'])
+            data = i['read_length__count']*i['read_counts']
             title = 'Reads Counts'
         else: 
-            data = int((100*i['read_length__count']*i['read_counts'])/d[i['lib']])
+            data = (100*i['read_length__count']*i['read_counts'])/d[i['lib']]
             title ='Read counts per miRNA mapped'
             
         df[lb][lh] += data
-
+    
      # Draws the figure 
     fig= plt.figure()
     ax = fig.add_subplot(111)
-    df.plot(ax=ax,style=style,kind=chart_type,figsize=(10,8),subplots=False)
-
+    graph = df.plot(ax=ax ,style=style,kind=chart_type,figsize=(10,8),subplots=False,legend=False)
+    handles, labels = graph.get_legend_handles_labels()
+    #graph.legend(handles, labels)
+    graph.legend(handles,[i+' '+str(df[i].sum().round(2)) for i in libraries], title= 'Library : Total ')
     plt.title('Read Length Distribution of '+ str(interval_object.mirName))
     plt.xlabel('Length of Read')
     plt.grid(True)
     plt.ylabel(title)
-
+    plt.tight_layout()
+    
     # Adds in the coordinates      
     cord_df = df.stack(0).reset_index(0)
     cord_df['z']= cord_df[0]
@@ -75,7 +79,11 @@ def plot_graph(name,libraries,chart_type,normal,style):
         if i[1] == 0:
             pass
         else:
-            plt.annotate(str(i[2]), (int(i[0]),int(i[1])), xytext=(int(i[0]),int(i[1])), fontsize=12)
+            if i[2] % 1 == 0:
+               num = int(i[2])
+            else:
+                num = "%.2f"%i[2]
+            plt.annotate(num , (int(i[0]),int(i[1])), xytext=(int(i[0]),int(i[1])), fontsize=12)
     
     canvas = FigureCanvas(fig)
     response = HttpResponse(mimetype='image/jpg')

@@ -6,11 +6,17 @@
     <head>
       {% block title %} Intervals {% endblock %}
     </head>
-    <body>
-     {% block content %}
+    <body>    
+      {% block content %}
+      <ul>
+      {% for err in errors %}
+      <li>{{ err }}</li>
+      {% endfor %}
+      </ul>
         <form action="" method="post"
     {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>{% csrf_token %}
 {{form.as_ul}}
+
         <input type="submit" />
     </form>
          <link rel="stylesheet"
