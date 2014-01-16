@@ -37,10 +37,11 @@ class IntervalDetailView(SingleTableMixin,DetailView):
 
         for seq_record in SeqIO.parse(fasta_file,'fasta'):
             seq = seq_record.seq
-        if self.object.mapped_strand == "+":
             seqInterval = str(seq[stt:stp])
-        else:
-            seqInterval = str(seq[stt:stp].reverse_complement())
+        # if self.object.mapped_strand == "+":
+        #     seqInterval = str(seq[stt:stp])
+        # else:
+        #     seqInterval = str(seq[stt:stp].reverse_complement())
         return seqInterval
 
     
@@ -52,8 +53,8 @@ class IntervalDetailView(SingleTableMixin,DetailView):
             
     def get_msa(self):
         self = self.object
-        read_list=Read_alignment.objects.filter(intervalName=self,strand=self.mapped_strand).order_by('lib').select_related().order_by('start')
-        count_seq=  read_list.values('sequence','start','stop').annotate(Count('sequence'))
+        read_list=Read_alignment.objects.filter(intervalName=self).order_by('lib').select_related().order_by('start')
+        count_seq=  read_list.values('sequence','start','stop','rev_sequence').annotate(Count('sequence'))
         all_libs = read_list.values('lib').annotate(Count('lib'))
         allseqs =[]
         string ="\n\n"
@@ -75,20 +76,16 @@ class IntervalDetailView(SingleTableMixin,DetailView):
         counts = df.to_string(index=None, na_rep ='',sparsify=True)
 
         for j in count_seq:
+            spaces = int(j['start'])-int(self.start)  
             if self.mapped_strand == '+':
                 reads = '%s\n' % j['sequence'] 
-                spaces = int(j['start'])-int(self.start)            
-                if spaces >= 1:
-                    string += spaces * ' ' + reads 
-                else:
-                    string += reads
             else:
-                reads = '%s\n' % j['sequence']   
-                spaces = int(self.stop)-int(j['stop'])
-                if spaces >= 1:
-                    string += spaces * ' ' + reads 
-                else:
-                    string += reads   
+                reads = '%s\n' % j['rev_sequence']   
+                
+            if spaces >= 1:
+                string += spaces * ' ' + reads 
+            else:
+                string += reads   
         return {'string':string, 'counts': counts}
 
 

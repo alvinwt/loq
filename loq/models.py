@@ -117,14 +117,15 @@ class Read_alignment(models.Model):
     lib = models.CharField(max_length=50,blank=True)
     library = models.ForeignKey(Library)
     sequence = models.CharField(max_length=150)
+    rev_sequence= models.CharField(max_length=150,null=True)
     read_counts = models.IntegerField(max_length=45, null=True)
     genomic_hits = models.IntegerField(max_length=45)
     chr = models.CharField(max_length=45)
     start = models.IntegerField(max_length=45)
     stop = models.IntegerField(max_length=45)
     strand = models.CharField(max_length=5, choices={('+','+'),('-','-')})
-    big2catrenormRPmirpre = models.DecimalField(max_digits=19,decimal_places=15,null=True)
-    AGO1IPoverTotalRNA = models.DecimalField(max_digits=19,decimal_places=15,null=True)
+    #big2catrenormRPmirpre = models.DecimalField(max_digits=19,decimal_places=15,null=True)
+    #AGO1IPoverTotalRNA = models.DecimalField(max_digits=19,decimal_places=15,null=True)
     normReads =models.FloatField(null=True)
     intervalName = models.ForeignKey(Interval,null=True)
     structure= models.CharField(max_length=1000,blank=True)
@@ -176,9 +177,10 @@ class IntervalFilter(django_filters.FilterSet):
     mirName =df.CharFilter(lookup_type='icontains',label='miRNA Name')
     Annotations=df.AllValuesFilter()
     IntervalSerialNumber =df.NumberFilter(label='Id')
+    NeatName = df.CharFilter(label='Genomic Location')
     class Meta:
         model = Interval
-        fields = ['mirName','IntervalSerialNumber','chr','start','stop','Annotations']
+        fields = ['mirName','IntervalSerialNumber','chr','start','stop','Annotations','NeatName']
         #order_by = (('NeatName', 'Interval'),
         #            ('start','Start range'),
         #            ('stop','Stop Range'))
