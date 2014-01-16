@@ -1,5 +1,5 @@
 from django.views.generic import DetailView
-from .models import Read_alignment, Interval
+from .models import Read_alignment, Interval, Library
 from .forms import GraphForm
 import os
 from django_tables2 import RequestConfig, SingleTableMixin
@@ -166,15 +166,21 @@ class IntervalDetailView(SingleTableMixin,DetailView):
     def get_graph2(self):
         self=self.object
         reads= Read_alignment.objects.filter(intervalName=self,strand=self.mapped_strand).order_by('lib')
-        libs = ['D005', 'D006','D007','D008','D009', 'D010']
+        libs = []
+        for i in Library.objects.all().order_by('library_id'):
+            libs.append(str(i.library_id))
+            
         cords = np.arange(self.start-1,self.stop+1)
         
         df = pd.DataFrame(index=cords, columns=libs)
-        df = df.fillna(0)
+        df = df.fillna(0).convert_objects()
         for i in reads:
             for j in range(i.start,i.stop):
                 df[i.lib][j] += i.normReads
-
+                
+        df['Mid Point'] = pd.Series(np.zeros(len(cords)), index=df.index)
+        df['Mid Point'][self.mid_point] += df.max().max()
+        
         a= np.array(df)
         w = np.reshape(cords,(len(cords),-1))
         list = np.concatenate((w,a),axis=1)
@@ -184,6 +190,7 @@ class IntervalDetailView(SingleTableMixin,DetailView):
             pass
         list = list.tolist()
         libs.insert(0,"Coordinates")
+        libs.insert(len(libs),'Mid point')
         list.insert(0,libs)
               
             #first_row.insert(0,'Coordinates')

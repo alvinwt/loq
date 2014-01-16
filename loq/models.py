@@ -22,6 +22,7 @@ class Interval(models.Model):
     sum_read_counts = models.IntegerField(max_length=10000, null=True, verbose_name='Reads Mapped')
     sum_normReads = models.FloatField(null=True,verbose_name='Total Normalized Reads')
     mapped_strand = models.CharField(max_length=5, choices={('+','+'),('-','-')}, verbose_name='miRNA Strand')
+    mid_point =models.IntegerField(max_length=45,blank=True)
     Link= models.URLField(max_length=200,blank=True)
 
     @property

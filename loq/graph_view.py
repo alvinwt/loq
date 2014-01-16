@@ -51,7 +51,7 @@ def plot_graph(name,libraries,chart_type,normal,style):
             data = i['read_length__count']*i['read_counts']
             title = 'Reads Counts'
         else: 
-            data = (100*i['read_length__count']*i['read_counts'])/d[i['lib']]
+            data = (100*float(i['read_length__count']*i['read_counts']))/float(d[i['lib']])
             title ='Read counts per miRNA mapped'
             
         df[lb][lh] += data
