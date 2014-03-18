@@ -1,7 +1,7 @@
 from django.views.generic.list import ListView
 from django_tables2 import RequestConfig, SingleTableMixin
 from django.shortcuts import render
-from tables import IntervalTable, AlignTable
+from tables import IntervalTable, AlignTable, IntervalTable1
 from loq.models import Interval, IntervalFilter,Read_alignment, AlignFilter
 from django.shortcuts import render_to_response
 from rest_framework import viewsets
@@ -19,7 +19,7 @@ class IntervalList(SingleTableMixin,ListView):
 @login_required
 def int_filter(request):
     fil = IntervalFilter(request.GET, queryset = Interval.objects.select_related().all())
-    f= IntervalTable(fil.qs)
+    f= IntervalTable1(fil.qs)
     RequestConfig(request).configure(f)
     return render(request,'loq/filter.html', {'f': f, 'fil':fil})
 

@@ -112,44 +112,27 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 #     'django.template.loaders.eggs.Loader',
 )
-TEMPLATE_CONTEXT_PROCESSORS = ('django.core.context_processors.request',
-                               'django.contrib.auth.context_processors.auth',
+TEMPLATE_CONTEXT_PROCESSORS = ('django.contrib.auth.context_processors.auth',
                                'django.core.context_processors.static',
-                               'django.contrib.auth.context_processors.auth',
                                'django.core.context_processors.csrf',
-                              # 'cms.context_processors.media',
-                              # 'sekizai.context_processors.sekizai',
-    
-    )
+                               'django.core.context_processors.request',
+)
 
 MIDDLEWARE_CLASSES = (
      'django.middleware.common.CommonMiddleware',
-     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
      'django.middleware.csrf.CsrfViewMiddleware',
-     'django.contrib.auth.middleware.AuthenticationMiddleware',
      'django.contrib.messages.middleware.MessageMiddleware',
      'debug_toolbar.middleware.DebugToolbarMiddleware',
      'django.middleware.doc.XViewMiddleware',
-    # 'cms.middleware.page.CurrentPageMiddleware',
-    #'cms.middleware.user.CurrentUserMiddleware',
-    #'cms.middleware.toolbar.ToolbarMiddleware',
-    #'cms.middleware.language.LanguageCookieMiddleware',
-
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
 
 ROOT_URLCONF = 'loq.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'loq.wsgi.application'
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    )
-}
 
 TEMPLATE_DIRS = (
 #"/home/lichenhao/Dropbox/djangosite/loq/Templates/loq",
@@ -161,12 +144,6 @@ os.path.join(SITE_ROOT, 'Templates/loq'),
     # Don't forget to use absolute paths, not relative paths.
 )
 
-# CMS_TEMPLATES = (
-#     ('srb/template_1.html', 'Template One'),
-#     ('srb/align_data.html','Align'),
-#     ('srb/int_data.html', 'Interval'),
-#     ('srb/filter.html', 'Search')
-# )
 
 INSTALLED_APPS = (
      'django.contrib.auth',
@@ -175,37 +152,26 @@ INSTALLED_APPS = (
      'django.contrib.sites',
      'django.contrib.messages',
      'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
      'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
      'django.contrib.admindocs',
+     'django.contrib.comments',
+     'favit',
+     'django.contrib.sites',
+     'django.contrib.flatpages',
      'debug_toolbar',
      'django_extensions',
      'south',
      'django_tables2',
-# 'webplotlib',
      'rest_framework',
-    # 'cms',
-    # 'mptt',
-     #'menus',
-    # 'sekizai',
-    # 'djangocms_table',
-#    'GChartWrapper.charts',
-     #'cms.plugins.file',
      'django_filters',
-     #'cms.plugins.flash', 
-     #'cms.plugins.googlemap',
-     #'cms.plugins.link',
-     #'cms.plugins.picture',
-     #'cms.plugins.teaser',
-     #'cms.plugins.text',
      'dbbackup',
      'csvimport',
-     'loq'
-   )
+     'django_pandas',
+     'loq',
+)
 LOGIN_URL='/login/'
 LOGIN_REDIRECT_URL='/interval/'
-
+SESSION_ENGINE = "django.contrib.sessions.backends.cache" 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',

@@ -1,33 +1,90 @@
 {% load render_table from django_tables2 %}
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+{% load static %}
+{% url 'logout' as logout_url %}
+{% url 'graph_form' as g_url %}
+{% load favit_tags %}
+<!DOCTYPE html>
 <html lang="en">
 <html>
   <head>
-       <title>{% block title %}{% endblock %}</title>
+      <link rel="stylesheet" href="{% static '/static/favit/css/css/favorite.css' %}">
+         <link rel="stylesheet" href="{% static '/static/paleblue/css/screen.css'%}" />
+             <link rel="stylesheet" href="{% static '/static/bootstrap/css/bootstrap.css' %}" >
+        <title>{% block title %}{% endblock %}</title>
 </head>
        <body>
-
-          {% url 'interval' as int_url %}
-      <a href="{{ int_url }}"/>Home</a>
-      {% url 'int_filter' as search_url %}
-      <a href="{{ search_url }}"/>Search</a>
- {% url 'logout' as logout_url %}
-{% url 'graph_form' as g_url %}
-      <a href="{{ g_url }}"/>Graph Generator</a>
-      <a href="{{ logout_url }}"/>Logout</a>
-
-    {% if user.is_authenticated %}
+         <div class="container">
+<div id ="navigation">
+{% block navigation %}
+      <!-- Static navbar -->
+      <div class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'admin:index' %}">miRNA Database</a>
+          </div>
+          
+          <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li> {% url 'interval' as int_url %}
+      <a href="{{ int_url }}"/>miRNA Intervals</a></li>
+              <li>  {% url 'int_filter' as search_url %}
+      <a href="{{ search_url }}"/>Search</a></li>
+              <li><a href="{{ g_url }}"/>Read Length Distribution</a></li>
+<li class="dropdown">
+                <a href="#" class="dropdown-toggle"
+                data-toggle="dropdown">Links <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'about' %}">About Us</a></li>
+                  <li><a href="{% url 'license' %}">License</a></li>
+                  <li><a href="{% url 'help' %}">Help Page</a></li>
+                  <li class="divider"></li>
+                  <li class="dropdown-header">Other Links</li>
+                  <li><a href="http://www.mirbase.org">miRBase</a></li>
+                  <li><a href="http://genome.ucsc.edu">UCSC Genome
+                  Browser</a></li>
+                                    <li><a href="https://www.djangoproject.com/">Django Documentation</a></li>
+                </ul>
+              </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                  {% if user.is_authenticated %}
     {% if user.is_superuser %}
     {%load admin_urls %}
-    <p>Hello, <a href="{% url 'admin:index' %}"/>Admin {{user.username}}</a></p>
+  <li><a href="{% url 'user' user.id %}"/>{{user.username|capfirst}}'s Page</a>
 {% else %}
-    <p>Hello, ordinary visitor.</p>
+  </li> <li><a href="{% url 'user' user.id %}"/>{{user.username|capfirst}}'s Page </a>
 {% endif %}
     {% endif %}
+                              </li>
+              <li><a href="{{ logout_url }}"/>Logout</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+{% endblock %}
+      </div>
+<div id="header">
     <h1>Small RNA Biogenesis Site</h1>
-    {% block content %}{% endblock %}
-    <hr>
-    
+    <br>
+    {% block header %} {% endblock %}
+   </div>
+</div> 
+      <div id= "content">
+       {% block content %}
+       {% endblock %}
+</div>
+
+<hr>
    <p>Site Under Construction.</p>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+       <script src="{% static 'favit/js/favorite.js' %}"></script>
 </body>
 </html>

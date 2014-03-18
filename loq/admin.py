@@ -1,5 +1,5 @@
 from django.contrib import admin
-from loq.models import Library, Interval, Sequencing_Run, Read_alignment, Genome_Build
+from loq.models import Library, Interval, Sequencing_Run, Read_alignment
 
 class LibAdmin(admin.ModelAdmin):
     list_display = ('library_id',)
@@ -25,7 +25,6 @@ class AlignmentAdmin(admin.ModelAdmin):
 #     raw_id_fields = ('publisher',)
     
 admin.site.register(Library,LibAdmin)
-admin.site.register(Genome_Build)
 admin.site.register(Sequencing_Run)
 admin.site.register(Read_alignment,AlignmentAdmin)
 admin.site.register(Interval,IntAdmin)

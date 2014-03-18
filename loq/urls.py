@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from views import AlignListAPIView,LibraryListView, IntView,coordinate,showStaticImage, AlignListView
 from django_filters.views import FilterView
 from loq.models import Library, Interval
+from user_detail import UserDetailView
 
 admin.autodiscover()
 router = routers.DefaultRouter()
@@ -27,13 +28,24 @@ urlpatterns = patterns('',
                       url(r'^api/$', AlignListAPIView.as_view(), name='list'),
                       url(r'^interval/$',login_required(IntervalList.as_view()),name='interval'),
                       url(r'^(?P<pk>[0-9A-Za-z-_.//:]+)/interval/$', IntervalDetailView.as_view(), name='IntervalDetailView', ),
+# url(r'^(?P<pk>[0-9A-Za-z-_.//:]+)/interval/dist.png$', IntervalDetailView.get_dist, name='IntervalDetailViewDist', ),
                       url(r'^interval/search/$',int_filter,name='int_filter'),
                        url(r'^align/search/$',align_filter,name='align_filter'),
                        url(r'^login/$', 'django.contrib.auth.views.login',{'template_name':'loq/login.html'}, name='login'),
                        url('^logout/$', 'django.contrib.auth.views.logout_then_login',name='logout'),
                        url(r'^',include(router.urls)),
+                      url(r'^favit/', include('favit.urls')),
                       url(r'^', include('rest_framework.urls', namespace='rest_framework')),
+                      url(r'^comments/', include('django.contrib.comments.urls')),
+                       url(r'^(?P<pk>\d+)/user/$', UserDetailView.as_view(), name='user', ),
                       url(r'^graph/$',Graph_Form, name='graph_form')
+                      
+)
+
+urlpatterns += patterns('django.contrib.flatpages.views',
+    url(r'^about-us/$', 'flatpage', {'url': '/about-us/'}, name='about'),
+    url(r'^license/$', 'flatpage', {'url': '/license/'}, name='license'),
+     url(r'^help/$', 'flatpage', {'url': '/help/'}, name='help'),
 )
 
 if settings.DEBUG:
